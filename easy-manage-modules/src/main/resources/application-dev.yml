@@ -1,4 +1,6 @@
 # 开发环境
+server:
+  port: 1000
 spring:
   application:
     name: easy-manage
@@ -10,11 +12,30 @@ spring:
     url: jdbc:mysql://localhost:3306/easy_manage?useUnicode=true&characterEncoding=UTF8
     username: root
     password: 123456
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    password: fengxiang__2017
+    lettuce:
+      pool:
+        min-idle: 50
+        max-idle: 100
+        max-active: 100
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: 6000
+    timeout: 1000
+#  mvc:
+#    throw-exception-if-no-handler-found: true
+#  resources:
+#    add-mappings: false
+
 
 
 # Logger Config
 logging:
   level:
+    root: info
     com.baomidou.mybatisplus.samples: debug
 
 # mybatis-plus Config
@@ -26,3 +47,7 @@ mybatis-plus:
     db-config:
       logic-delete-value: 0 # 无效
       logic-not-delete-value: 1 # 有效
+
+# swagger-enabled
+swagger:
+  enabled: true

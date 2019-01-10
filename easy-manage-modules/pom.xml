@@ -20,6 +20,7 @@
         <mybatisplus.version>3.0.6</mybatisplus.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <swagger-bootstrap-ui.version>1.8.8</swagger-bootstrap-ui.version>
+        <shiro-spring.version>1.4.0</shiro-spring.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -40,6 +41,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
@@ -54,6 +65,13 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>swagger-bootstrap-ui</artifactId>
             <version>${swagger-bootstrap-ui.version}</version>
+        </dependency>
+
+        <!-- shiro spring. -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>${shiro-spring.version}</version>
         </dependency>
 
         <dependency>
