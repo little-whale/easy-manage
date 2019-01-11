@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Profile;
  * @date 2018/12/27
  */
 @Configuration
-@MapperScan("com.github.littlewhale.easymanage.modules.*.mapper")
+@MapperScan("com.github.littlewhale.easymanage.modules.**.mapper")
 public class MybatisConfig {
 
     /**

@@ -5,9 +5,9 @@ import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.github.littlewhale.easymanage.modules.commom.exception.BizException;
 import com.github.littlewhale.easymanage.modules.commom.response.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.shiro.web.util.WebUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -26,9 +26,8 @@ import java.io.PrintWriter;
  * @author cjp
  * @date 2019/1/4
  */
+@Slf4j
 public class JwtFilter extends BasicHttpAuthenticationFilter {
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
 
     /**
      * 判断用户是否想要登入。
@@ -48,9 +47,13 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        HttpServletRequest httpRequest = WebUtils.toHttp(request);
         if (isLoginAttempt(request, response)) {
             try {
                 // 所有登录异常，try...catch{} 输出异常
+                if (log.isWarnEnabled()) {
+                    log.warn("JwtFilter--->有token拦截： " + httpRequest.getRequestURI());
+                }
                 executeLogin(request, response);
             } catch (Exception e) {
                 String msg = e.getMessage();
@@ -67,6 +70,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 // 直接返回Response信息
                 this.response401(request, response, msg);
                 return false;
+            }
+        }else {
+            if (log.isWarnEnabled()) {
+                log.warn("JwtFilter--->无token拦截： " + httpRequest.getRequestURI());
             }
         }
         return true;
@@ -120,7 +127,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             String data = JSON.toJSONString(Result.instance(HttpStatus.UNAUTHORIZED.value(), "token校验失败：" + msg));
             out.append(data);
         } catch (IOException e) {
-            logger.error("直接返回Response信息出现IOException异常:" + e.getMessage());
+            log.error("直接返回Response信息出现IOException异常:" + e.getMessage());
             throw new BizException("直接返回Response信息出现IOException异常:" + e.getMessage());
         } finally {
             if (out != null) {

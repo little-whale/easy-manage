@@ -3,11 +3,8 @@ package com.github.littlewhale.easymanage.modules.commom.handle;
 import com.github.littlewhale.easymanage.modules.commom.exception.BizException;
 import com.github.littlewhale.easymanage.modules.commom.response.Result;
 import com.github.littlewhale.easymanage.modules.commom.response.ResultCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.authz.UnauthenticatedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,10 +18,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author cjp
  * @date 2019/1/7
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    private Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 业务错误
@@ -35,7 +31,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BizException.class)
     public Result baseExceptionHandler(HttpServletResponse response, BizException e) {
-        logger.error(e.getMessage(), e);
+        log.error(e.getMessage(), e);
         response.setStatus(500);
         return Result.instance(e.getCode(), e.getMessage());
     }
@@ -62,8 +58,8 @@ public class GlobalExceptionHandler {
             message = "无权限访问！";
         }
         response.setStatus(code);
-        if(logger.isDebugEnabled()){
-            logger.debug(message, e);
+        if(log.isDebugEnabled()){
+            log.debug(message, e);
         }
         return Result.instance(code, message);
     }

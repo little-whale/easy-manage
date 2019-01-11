@@ -1,5 +1,6 @@
 package com.github.littlewhale.easymanage.modules.config.shiro;
 
+import com.github.littlewhale.easymanage.modules.system.service.IUserService;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -21,6 +22,17 @@ import java.util.Map;
  */
 @Configuration
 public class ShiroConfig {
+
+    /**
+     * 通过构造器注入，可以自定义凭证匹配器和缓存
+     * @param userService
+     * @return
+     */
+    @Bean
+    public JwtUserRealm userRealm(IUserService userService){
+        JwtUserRealm userRealm = new JwtUserRealm(userService);
+        return userRealm;
+    }
 
     /**
      * 会话管理器
@@ -54,8 +66,17 @@ public class ShiroConfig {
 
         // 定义shiro过滤链url信息
         Map<String, String> filterChainMap = new LinkedHashMap<>();
-        // 所有请求通过我们自己的JWTFilter
+        // 不经过拦截器,swagger文档信息
+        filterChainMap.put("/","anon");
+        filterChainMap.put("/index","anon");
+        filterChainMap.put("/*.ico", "anon");
+        filterChainMap.put("/webjars/**","anon");
+        filterChainMap.put("/swagger-resources","anon");
+        filterChainMap.put("/v2/api-docs","anon");
+        filterChainMap.put("/doc.html","anon");
+        filterChainMap.put("/static/**","anon");
         filterChainMap.put("/admin/login", "anon");
+        // 所有请求通过我们自己的JWTFilter
         filterChainMap.put("/**", "jwt");
         filterFactory.setFilterChainDefinitionMap(filterChainMap);
         return filterFactory;

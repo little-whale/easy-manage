@@ -1,30 +1,32 @@
 package com.github.littlewhale.easymanage.modules.config.shiro;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.littlewhale.easymanage.modules.commom.constant.BaseConstant;
-import com.github.littlewhale.easymanage.modules.commom.exception.BizException;
 import com.github.littlewhale.easymanage.modules.commom.util.JwtUtil;
 import com.github.littlewhale.easymanage.modules.system.entity.User;
 import com.github.littlewhale.easymanage.modules.system.service.IUserService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
+ * 凭证匹配器，采用默认的SimpleCredentialsMatcher
+ *
  * @author cjp
  * @date 2019/1/4
  */
-@Component
 public class JwtUserRealm extends AuthorizingRealm {
 
-    @Autowired
-    IUserService userService;
+    private final IUserService userService;
+
+    public JwtUserRealm(IUserService userService){
+        this.userService = userService;
+    }
 
     /**
      * 检验用户是否有权限时调用此方法
@@ -50,7 +52,9 @@ public class JwtUserRealm extends AuthorizingRealm {
     /**
      * 校验用户名和密码是否正确
      * <p>
-     * 当执行SecurityUtils.getSubject().login(token)时调用
+     * 当执行SecurityUtils.getSubject().login(token)时调用。
+     * 如果token采用明文密码，且采用Shiro的HashedCredentialsMatcher自定义密码校验，那么重写构造方法。
+     * </p>
      *
      * @param authToken
      * @return
@@ -71,6 +75,7 @@ public class JwtUserRealm extends AuthorizingRealm {
             // 统一抛出异常信息(密钥无效，token失效等)
             throw new AuthenticationException("无效的token信息！");
         }
+        // 由于authToken是jwtToken,所以这段代码SimpleCredentialsMatcher，100%成功
         return new SimpleAuthenticationInfo(user, token, getName());
 
     }

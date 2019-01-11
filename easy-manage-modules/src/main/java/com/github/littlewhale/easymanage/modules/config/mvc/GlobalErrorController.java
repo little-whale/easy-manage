@@ -1,8 +1,7 @@
 package com.github.littlewhale.easymanage.modules.config.mvc;
 
 import com.github.littlewhale.easymanage.modules.commom.response.Result;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
@@ -27,11 +26,10 @@ import java.util.Map;
  * @author cjp
  * @date 2019/1/8
  */
+@Slf4j
 @Controller
 @RequestMapping("${server.error.path:${error.path:/error}}")
 public class GlobalErrorController extends AbstractErrorController {
-
-    private final Logger logger = LoggerFactory.getLogger(GlobalErrorController.class);
 
     private final ErrorProperties errorProperties;
 
@@ -68,7 +66,7 @@ public class GlobalErrorController extends AbstractErrorController {
      * @param errorMap
      */
     private void errorLog(Map<String, Object> errorMap) {
-        logger.error("error request====>url:{},status:{},errorMsg:{},time:{}",
+        log.error("error request====>url:{},status:{},errorMsg:{},time:{}",
                 errorMap.get("path"), errorMap.get("status"), errorMap.get("message"), errorMap.get("timestamp"));
     }
 
