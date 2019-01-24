@@ -5,24 +5,32 @@ import com.github.littlewhale.easymanage.modules.commom.response.Result;
 import com.github.littlewhale.easymanage.modules.commom.util.JwtUtil;
 import com.github.littlewhale.easymanage.modules.commom.util.ShiroUtil;
 import com.github.littlewhale.easymanage.modules.config.shiro.JwtToken;
+import com.github.littlewhale.easymanage.modules.config.shiro.JwtUserRealm;
+import com.github.littlewhale.easymanage.modules.home.vo.LoginReq;
+import com.github.littlewhale.easymanage.modules.home.vo.UserInfoVo;
 import com.github.littlewhale.easymanage.modules.system.entity.User;
 import com.github.littlewhale.easymanage.modules.system.service.IUserService;
 import com.google.common.collect.Maps;
 import com.vip.vjtools.vjkit.id.IdUtil;
+import com.vip.vjtools.vjkit.mapper.BeanMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -40,14 +48,14 @@ public class AdminController {
 
     @PostMapping("/login")
     @ApiOperation(value = "登录接口", notes = "登录接口,返回token")
-    public Result login(@RequestParam @NotEmpty(message = "账号不能为空") String account,
-                        @RequestParam @NotEmpty(message = "密码不能为空") String password,HttpServletResponse response) {
+    public Result login(@RequestBody @Valid LoginReq loginReq, HttpServletResponse response) {
+        String account = loginReq.getAccount();
         User user = userService.getOne(new QueryWrapper<>(new User().setAccount(account)));
         String message = "用户不存在或密码错误！";
         if(user == null) {
             return Result.fail(message);
         }
-        String encryPwd = ShiroUtil.sha1(password, user.getSalt());
+        String encryPwd = ShiroUtil.sha1(loginReq.getPassword(), user.getSalt());
         if(!encryPwd.equals(user.getPassword())){
             return Result.fail(message);
         }
@@ -55,6 +63,22 @@ public class AdminController {
         response.setHeader(HttpHeaders.AUTHORIZATION, token);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.AUTHORIZATION);
         return Result.ok(token);
+    }
+
+    @GetMapping("/getUserByToken")
+    public Result getUserByToken(@RequestParam @NotEmpty(message = "token信息不能为空") String token){
+        JwtToken jwtToken = new JwtToken(token);
+        Subject subject = SecurityUtils.getSubject();
+        subject.login(jwtToken);
+        User user = (User)subject.getPrincipal();
+        UserInfoVo userInfoVo = BeanMapper.map(user,UserInfoVo.class);
+        userInfoVo.setAccess("admin");
+        return Result.ok(userInfoVo);
+    }
+
+    @PostMapping("/logout")
+    public Result logout(){
+        return Result.ok();
     }
 
     @GetMapping(value = "/test")

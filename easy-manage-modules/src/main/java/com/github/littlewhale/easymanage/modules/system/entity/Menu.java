@@ -9,54 +9,54 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 用户表
+ * 
  * </p>
  *
  * @author cjp
- * @since 2019-01-10
+ * @since 2019-01-14
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@TableName("t_user")
-public class User extends BaseEntity {
+@TableName("t_menu")
+public class Menu extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 姓名
+     * 上级ID
+     */
+    private Integer parentId;
+
+    /**
+     * 菜单名称
      */
     private String name;
 
     /**
-     * 邮箱
+     * 菜单路径
      */
-    private String email;
+    private String path;
 
     /**
-     * 手机号
+     * 权限授权(多个用逗号分隔，如：user:list,user:create)
      */
-    private String mobile;
+    private String perms;
 
     /**
-     * 头像图片路径
+     * 类型   0：目录   1：菜单   2：按钮
      */
-    private String photo;
+    private Integer type;
 
     /**
-     * 账号
+     * 菜单图标
      */
-    private String account;
+    private String icon;
 
     /**
-     * 密码
+     * 排序序号
      */
-    private String password;
-
-    /**
-     * 盐值
-     */
-    private String salt;
+    private Integer orderNum;
 
     /**
      * 状态（0：禁用，1：启用）

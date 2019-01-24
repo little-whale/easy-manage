@@ -15,6 +15,7 @@
         <fastjson.version>1.2.54</fastjson.version>
         <vjkit.version>1.0.8</vjkit.version>
         <java-jwt.version>3.5.0</java-jwt.version>
+        <dozer.version>5.5.1</dozer.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -38,6 +39,12 @@
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
             <version>${java-jwt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+            <version>${dozer.version}</version>
         </dependency>
 
     </dependencies>

@@ -9,54 +9,29 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 用户表
+ * 
  * </p>
  *
  * @author cjp
- * @since 2019-01-10
+ * @since 2019-01-14
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@TableName("t_user")
-public class User extends BaseEntity {
+@TableName("t_user_role")
+public class UserRole extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 姓名
+     * 用户ID
      */
-    private String name;
+    private Integer fkUserId;
 
     /**
-     * 邮箱
+     * 角色ID
      */
-    private String email;
-
-    /**
-     * 手机号
-     */
-    private String mobile;
-
-    /**
-     * 头像图片路径
-     */
-    private String photo;
-
-    /**
-     * 账号
-     */
-    private String account;
-
-    /**
-     * 密码
-     */
-    private String password;
-
-    /**
-     * 盐值
-     */
-    private String salt;
+    private Integer fkRoleId;
 
     /**
      * 状态（0：禁用，1：启用）
